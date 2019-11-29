@@ -9,4 +9,4 @@ objc = "=0.2.6"
 
 [dependencies.amethyst]
 version = "0.13"
-features = ["metal", "nightly"]
+features = ["metal"]

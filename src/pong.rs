@@ -10,9 +10,8 @@ use amethyst::{
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
 
-pub struct Pong;
 
-fn initialise_camera(world: &mut World) {
+fn initialize_camera(world: &mut World) {
     // Setup camera in a way that our screen covers whole arena and (0, 0) is in the bottom left. 
     let mut transform = Transform::default();
     transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 1.0);
@@ -24,11 +23,14 @@ fn initialise_camera(world: &mut World) {
         .build();
 }
 
+pub struct Pong;
+
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        data.world.register::<Paddle>();
-        initialize_paddles(data.world).
-        initialise_camera(data.world);
+        let world = data.world;
+        world.register::<Paddle>();
+        initialize_paddles(world);
+        initialize_camera(world);
     }
 }
 
@@ -69,6 +71,7 @@ fn initialize_paddles(world: &mut World) {
     let mut right_transform = Transform::default();
 
     // Correctly position the paddles
+    let y = ARENA_HEIGHT / 2.0;
     left_transform.set_translation_xyz(PADDLE_WIDTH * 0.5, y, 0.0);
     right_transform.set_translation_xyz(ARENA_WIDTH - PADDLE_WIDTH * 0.5, y, 0.0);
 

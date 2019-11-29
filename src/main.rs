@@ -1,6 +1,7 @@
 
 use amethyst::{
     prelude::*,
+    core::transform::TransformBundle,
     renderer::{
         plugins::{RenderFlat2D, RenderToWindow},
         types::DefaultBackend,
@@ -31,7 +32,10 @@ fn main () -> amethyst::Result<()> {
                 )
                 // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
                 .with_plugin(RenderFlat2D::default()),
-        )?;
+        )?
+        // Add the transform bundle which handles tracking entity positions
+        .with_bundle(TransformBundle::new())?;
+
 
     let mut game = Application::new(assets_dir, Pong, game_data)?;
     game.run();
