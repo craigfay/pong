@@ -11,8 +11,10 @@ use amethyst::{
     utils::application_root_dir,
 };
 
+mod systems;
 mod pong;
 use crate::pong::Pong;
+
 
 fn main () -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -39,7 +41,8 @@ fn main () -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default()),
         )?
         .with_bundle(input_bundle)?
-        .with_bundle(TransformBundle::new())?;
+        .with_bundle(TransformBundle::new())?
+        .with(systems::PaddleSystem, "paddle_system", &["input_system"]);
 
 
     let mut game = Application::new(assets_dir, Pong, game_data)?;
