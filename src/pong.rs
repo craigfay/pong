@@ -1,7 +1,7 @@
 
 use amethyst::{
     assets::{AssetStorage, Loader, Handle},
-    core::transform::Transform,
+    core::{transform::Transform, timing::Time},
     ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
@@ -23,18 +23,41 @@ fn initialize_camera(world: &mut World) {
         .build();
 }
 
-pub struct Pong;
+#[derive(Default)]
+pub struct Pong {
+    ball_spawn_timer: Option<f32>,
+    sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+}
 
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let sprite_sheet_handle = load_sprite_sheet(data.world);
+        self.sprite_sheet_handle.replace(load_sprite_sheet(data.world));
 
-        data.world.register::<Ball>(); // <- add this line temporarily
+        // Wait one second before spawning the ball.
+        self.ball_spawn_timer.replace(1.0);
 
         // Cloning is necessary because these functions consume the handle
         initialize_paddles(data.world, sprite_sheet_handle.clone());
-        initialize_ball(data.world, sprite_sheet_handle);
         initialize_camera(data.world);
+    }
+
+    fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
+        if let Some(mut timer) = self.ball_spawn_timer.take() {
+            // If the timer isn't expired yet, subtract the time that passed since the last update.
+            {
+                let time = data.world.fetch::<Time>();
+                timer -= time.delta_seconds();
+            }
+            if timer <= 0.0 {
+                // When timer expire, spawn the ball
+                initialize_ball(data.world, self.sprite_sheet_handle.clone().unwrap());
+            } else {
+                // If timer is not expired yet, put it back onto the state.
+                self.ball_spawn_timer.replace(timer);
+            }
+        }
+        Trans::None
     }
 }
 
