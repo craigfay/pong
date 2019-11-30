@@ -28,7 +28,6 @@ fn main () -> amethyst::Result<()> {
     let input_bundle = InputBundle::<StringBindings>::new()
         .with_bindings_from_file(binding_path)?;
 
-    let mut world = World::new();
     let game_data = GameDataBuilder::default()
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
@@ -48,7 +47,8 @@ fn main () -> amethyst::Result<()> {
             systems::BounceSystem,
             "collision_system",
             &["paddle_system", "ball_system"],
-        );
+        )
+        .with(systems::WinnerSystem, "winner_system", &["ball_system"]);
 
 
     let mut game = Application::new(assets_dir, Pong::default(), game_data)?;
