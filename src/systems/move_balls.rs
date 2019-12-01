@@ -1,7 +1,5 @@
 use amethyst::{
-    core::timing::Time,
-    core::transform::Transform,
-    core::SystemDesc,
+    core::{timing::Time, transform::Transform, SystemDesc},
     derive::SystemDesc,
     ecs::prelude::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage},
 };
@@ -9,9 +7,9 @@ use amethyst::{
 use crate::pong::Ball;
 
 #[derive(SystemDesc)]
-pub struct MoveBallSystem;
+pub struct MoveBallsSystem;
 
-impl<'s> System<'s> for MoveBallSystem {
+impl<'s> System<'s> for MoveBallsSystem {
     type SystemData = (
         ReadStorage<'s, Ball>,
         WriteStorage<'s, Transform>,
