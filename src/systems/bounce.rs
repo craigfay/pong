@@ -1,9 +1,14 @@
+use crate::pong::{Ball, Side, Paddle, ARENA_HEIGHT};
+use crate::audio::{play_bounce_sound, Sounds};
+
+use std::ops::Deref;
+
 use amethyst::{
     core::{Transform},
-    ecs::prelude::{Join, ReadStorage, System, WriteStorage},
+    assets::AssetStorage,
+    ecs::prelude::{Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
+    audio::{output::Output, Source},
 };
-
-use crate::pong::{Ball, Side, Paddle, ARENA_HEIGHT};
 
 pub struct BounceSystem;
 
@@ -12,9 +17,12 @@ impl<'s> System<'s> for BounceSystem {
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Paddle>,
         ReadStorage<'s, Transform>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (mut balls, paddles, transforms): Self::SystemData) {
+    fn run(&mut self, (mut balls, paddles, transforms, storage, sounds, audio_output): Self::SystemData) {
         // Check whether a ball collided, and bounce off accordingly.
         //
         // We also check for the velocity of the ball every time, to prevent multiple collisions
@@ -52,6 +60,7 @@ impl<'s> System<'s> for BounceSystem {
                         || (paddle.side == Side::Right && ball.velocity[0] > 0.0)
                     {
                         ball.velocity[0] = -ball.velocity[0];
+                        play_bounce_sound(&*sounds, &storage, audio_output.as_ref().map(|o| o.deref()));
                     }
                 }
             }

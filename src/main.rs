@@ -1,5 +1,6 @@
 mod pong;
 mod systems;
+mod audio;
 
 use crate::pong::Pong;
 use amethyst::{
@@ -13,6 +14,7 @@ use amethyst::{
     },
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
+    audio::AudioBundle,
 };
 
 fn main() -> amethyst::Result<()> {
@@ -34,6 +36,7 @@ fn main() -> amethyst::Result<()> {
             )?,
         )?
         .with_bundle(UiBundle::<StringBindings>::new())?
+        .with_bundle(AudioBundle::default())?
         // We have now added our own systems, defined in the systems module
         .with(systems::PaddleSystem, "paddle_system", &["input_system"])
         .with(systems::MoveBallsSystem, "ball_system", &[])
