@@ -44,7 +44,7 @@ impl SimpleState for Pong {
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         if let Some(mut timer) = self.ball_spawn_timer.take() {
-            // If the timer isn't expired yet, substract the time that passed since last update.
+            // If the timer isn't expired yet, subtract the time that passed since last update.
             {
                 let time = data.world.fetch::<Time>();
                 timer -= time.delta_seconds();

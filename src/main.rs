@@ -3,6 +3,7 @@ mod systems;
 mod audio;
 
 use crate::pong::Pong;
+use crate::audio::Music;
 use amethyst::{
     core::TransformBundle,
     input::{InputBundle, StringBindings},
@@ -14,7 +15,7 @@ use amethyst::{
     },
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
-    audio::AudioBundle,
+    audio::{AudioBundle, DjSystem},
 };
 
 fn main() -> amethyst::Result<()> {
@@ -23,8 +24,6 @@ fn main() -> amethyst::Result<()> {
     let app_root = application_root_dir()?;
     let display_config_path = app_root.join("config/display.ron");
 
-    // This line is not mentioned in the pong tutorial as it is specific to the context
-    // of the git repository. It only is a different location to load the assets from.
     let assets_dir = app_root.join("assets/");
 
     let game_data = GameDataBuilder::default()
@@ -46,6 +45,11 @@ fn main() -> amethyst::Result<()> {
             &["paddle_system", "ball_system"],
         )
         .with(systems::WinnerSystem, "winner_system", &["ball_system"])
+        .with(
+            DjSystem::new(|music: &mut Music| music.music.next()),
+            "dj_system",
+            &[],
+        )
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 // The RenderToWindow plugin provides all the scaffolding for opening a window and
