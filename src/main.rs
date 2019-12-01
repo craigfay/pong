@@ -15,7 +15,7 @@ use amethyst::{
     },
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
-    audio::{AudioBundle, DjSystem},
+    audio::{AudioBundle, DjSystemDesc},
 };
 
 fn main() -> amethyst::Result<()> {
@@ -45,8 +45,8 @@ fn main() -> amethyst::Result<()> {
             &["paddle_system", "ball_system"],
         )
         .with(systems::WinnerSystem, "winner_system", &["ball_system"])
-        .with(
-            DjSystem::new(|music: &mut Music| music.music.next()),
+        .with_system_desc(
+            DjSystemDesc::new(|music: &mut Music| music.music.next()),
             "dj_system",
             &[],
         )
